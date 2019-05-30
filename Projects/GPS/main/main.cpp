@@ -12,6 +12,7 @@
 #include "RTOStasks.h"
 #include "Source.h"
 #include "constants.h"
+#include "json_helper.hpp"
 
 using namespace std;
 
@@ -28,7 +29,7 @@ extern "C" void app_main() {
     initServer(&server, &params);
 
     //Create freeRTOS tasks.
-    xTaskCreate(vGPSTask, "GPS", 4096, (void *) &params, 1, NULL);
+    xTaskCreate(vGPSTask, "GPS", 40960, (void *) &params, 1, NULL);
 
 }
 

@@ -13,13 +13,16 @@
 #include "constants.h"
 #include "Servo_Control.hpp"
 #include "Motor_Control_rev1.hpp"
+#include "json_helper.hpp"
+#include <string>
+#include <iostream>
 
-String makeJsonString(vector<String>& keys, vector<String>& vals);
+// String makeJsonString(vector<String>& keys, vector<String>& vals);
 
 void initServer(AsyncWebServer* server, ParamsStruct* params) {
     // Create addresses for network connections
-    char * ssid = "SJSURoboticsAP";
-    char * password = "cerberus2019";
+    char ssid[] = "SJSURoboticsAP";
+    char password[] = "cerberus2019";
     IPAddress Ip(192, 168, 10, 19);
     IPAddress Gateway(192, 168, 10, 100);
     IPAddress NMask(255, 255, 255, 0);
@@ -59,7 +62,7 @@ void initServer(AsyncWebServer* server, ParamsStruct* params) {
 
     server->on("/getPositionalDataJSON", HTTP_POST, [=](AsyncWebServerRequest *request) {
         //declare individual vectors for your keys and values. 
-        vector <String> keys, vals;
+        std::vector <String> keys, vals;
         keys.push_back("longitude");
         keys.push_back("latitude");
         keys.push_back("epoch");
@@ -69,14 +72,15 @@ void initServer(AsyncWebServer* server, ParamsStruct* params) {
         vals.push_back(params->longitude);
         vals.push_back(params->latitude);
 
-        std:time_t time_obj = std::time(nullptr);
-        vals.push_back(std::to_string(time_obj));
+        std::time_t time_obj = std::time(nullptr);
+        vals.push_back(ctime(&time_obj));
+        // vals.push_back(std::to_string(time_obj)); // to_string(time_t val) is not a thing
 
         String json = makeJsonString(keys, vals);
         std::cout <<  json << std::endl;
 
         request->send(200, "application/json", json);
-    })
+    });
 
     /* SSE Example.
         - SSEs will be used to continuously send data that was
@@ -121,16 +125,16 @@ void initServer(AsyncWebServer* server, ParamsStruct* params) {
     //printf("initServer done\n");
 }
 
-String makeJsonString(vector<String>& keys, vector<String>& vals) {
-    String json = "{";
-    
-    for (int i=0; i<keys.size(); i++) {
-      if (i) json += ",";
-      json += ("\"" + keys[i] + "\":");
-      json += ("\"" + vals[i] + "\"");
-    }
-    
-    json += "}";
-
-    return json;
-}
+// String makeJsonString(vector<String>& keys, vector<String>& vals) {
+//     String json = "{";
+//     
+//     for (int i=0; i<keys.size(); i++) {
+//       if (i) json += ",";
+//       json += ("\"" + keys[i] + "\":");
+//       json += ("\"" + vals[i] + "\"");
+//     }
+//     
+//     json += "}";
+// 
+//     return json;
+// }

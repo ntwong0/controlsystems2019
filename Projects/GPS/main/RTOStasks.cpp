@@ -9,6 +9,7 @@
 #include "SoftwareSerial.h"
 #include "TinyGPS++.h"
 #include "Source.h"
+#include <string>
 
 extern "C" void vGPSTask(void *pvParameters)
 {
@@ -26,13 +27,14 @@ extern "C" void vGPSTask(void *pvParameters)
             gps.encode(ss.read());
             printf("\nLatitude:\n    ");
             Serial.print(gps.location.lat(), 6);
-            auto lat = gps.location.lat();
-            memcpy(Params->latitude, &lat, sizeof(lat));
+            double lat = gps.location.lat();
+            memcpy(Params->latitude, std::to_string(lat).c_str(), sizeof(lat)); 
+//            memcpy(Params->latitude, &lat, sizeof(lat)); // This triggers Guru Meditation Error (StoreProhibited)
 
             printf("\nLongitude:\n    ");
             Serial.print(gps.location.lng(), 6);
-            auto lng = gps.location.lng();
-            memcpy(Params->latitude, &lng, sizeof(lng));
+            double lng = gps.location.lng();
+            memcpy(Params->latitude, std::to_string(lng).c_str(), sizeof(lng));
         }
         if (millis() > 5000 && gps.charsProcessed() < 10)
         {
