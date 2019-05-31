@@ -16,6 +16,7 @@
 #include "json_helper.hpp"
 #include <string>
 #include <iostream>
+#include <WiFi.h>
 
 // String makeJsonString(vector<String>& keys, vector<String>& vals);
 
@@ -23,26 +24,29 @@ void initServer(AsyncWebServer* server, ParamsStruct* params) {
     // Create addresses for network connections
     char ssid[] = "SJSURoboticsAP";
     char password[] = "cerberus2019";
-    IPAddress Ip(192, 168, 10, 19);
-    IPAddress Gateway(192, 168, 10, 100);
+//    IPAddress Ip(192, 168, 10, 19);
+//    IPAddress Gateway(192, 168, 10, 100);
+//    IPAddress NMask(255, 255, 255, 0);
+    IPAddress Ip(192, 168, 43, 19);
+    IPAddress Gateway(192, 168, 43, 55);
     IPAddress NMask(255, 255, 255, 0);
     
     // Configure the soft AP
-    WiFi.mode(WIFI_AP_STA);    
-    WiFi.softAP("GPS", "GPS1234");
-    Serial.println();
-    Serial.print("AP IP address: ");
-    Serial.println(WiFi.softAPIP());
+    // WiFi.mode(WIFI_AP_STA);    
+    // WiFi.softAP("GPS", "GPS1234");
+    // Serial.println();
+    // Serial.print("AP IP address: ");
+    // Serial.println(WiFi.softAPIP());
 
     // Connect to the Rover's AP
-    //WiFi.config(Ip, Gateway, NMask);
-    //WiFi.begin(ssid, password);
-    //while (WiFi.status() != WL_CONNECTED)
-    //{
-    //    delay(500);
-    //    printf("Connecting to WiFi... ");
-    //}
-    //printf("\nConnected to %s\n", ssid);
+    WiFi.config(Ip, Gateway, NMask);
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        printf("Connecting to WiFi... ");
+    }
+     printf("\nConnected to %s\n", ssid);
     
     AsyncEventSource events("/events");
     DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");

@@ -11,9 +11,15 @@
 #include "Source.h"
 #include <string>
 
+extern ParamsStruct params;
+extern AsyncWebServer server;
+
 extern "C" void vGPSTask(void *pvParameters)
 {
     ParamsStruct *Params = (ParamsStruct *)pvParameters;
+
+    initServer(&server, &params);
+
     TinyGPSPlus gps;
     SoftwareSerial ss(RXPIN, TXPIN);
     Serial.begin(115200);
